@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"my-projects/utils"
+
+	"github.com/mahdee-123/go-two/utils"
 )
 
 // var firstName string = "mahdee"
