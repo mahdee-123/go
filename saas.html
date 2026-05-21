@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaaS Roadmap — 0 to Full Product</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Bengali:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: rgba(255,255,255,0.07);
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --accent: #7c6aff;
+    --accent2: #ff6a9b;
+    --accent3: #6affcc;
+    --accent4: #ffb86a;
+    --accent5: #6ab8ff;
+
+    --p0: #3d3d52;
+    --p1: #5c6bc0;
+    --p2: #0097a7;
+    --p3: #7c6aff;
+    --p4: #ff6a9b;
+    --p5: #ffb86a;
+    --p6: #ff5252;
+    --p7: #6affcc;
+    --p8: #6ab8ff;
+    --p9: #4caf50;
+    --p10: #e040fb;
+    --p11: #4caf50;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(124,106,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124,106,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 60px 24px 100px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 72px;
+  }
+
+  .header-badge {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    border: 1px solid rgba(124,106,255,0.3);
+    padding: 6px 16px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+    background: rgba(124,106,255,0.05);
+  }
+
+  .header h1 {
+    font-size: clamp(32px, 6vw, 56px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: #fff;
+    margin-bottom: 16px;
+  }
+
+  .header h1 span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header p {
+    color: var(--muted);
+    font-size: 15px;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.02em;
+  }
+
+  /* Timeline line */
+  .timeline {
+    position: relative;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 28px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom,
+      transparent,
+      rgba(124,106,255,0.4) 5%,
+      rgba(124,106,255,0.4) 95%,
+      transparent
+    );
+  }
+
+  /* Phase block */
+  .phase {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 48px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .phase-dot {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.2s;
+  }
+
+  .phase-dot:hover { transform: scale(1.1); }
+
+  .phase-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .phase-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+  }
+
+  .phase-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+
+  .phase-time {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  .phase-desc {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+
+  /* Task grid */
+  .tasks {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .task {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    transition: border-color 0.2s, background 0.2s;
+    cursor: default;
+  }
+
+  .task:hover {
+    background: var(--surface2);
+    border-color: rgba(255,255,255,0.15);
+  }
+
+  .task-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 3px;
+  }
+
+  .task-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* Milestone */
+  .milestone {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+  }
+
+  .milestone::before {
+    content: '✓';
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: rgba(106,255,204,0.1);
+    border: 1px solid rgba(106,255,204,0.3);
+    color: var(--accent3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+
+  .milestone span {
+    color: var(--accent3);
+  }
+
+  /* Color themes per phase */
+  .ph0 .phase-dot { background: rgba(61,61,82,0.3); border-color: var(--p0); color: #8888aa; }
+  .ph0 .task { border-left: 2px solid var(--p0); }
+
+  .ph1 .phase-dot { background: rgba(92,107,192,0.15); border-color: var(--p1); color: var(--p1); }
+  .ph1 .task { border-left: 2px solid var(--p1); }
+
+  .ph2 .phase-dot { background: rgba(0,151,167,0.15); border-color: var(--p2); color: var(--p2); }
+  .ph2 .task { border-left: 2px solid var(--p2); }
+
+  .ph3 .phase-dot { background: rgba(124,106,255,0.15); border-color: var(--p3); color: var(--p3); }
+  .ph3 .task { border-left: 2px solid var(--p3); }
+
+  .ph4 .phase-dot { background: rgba(255,106,155,0.15); border-color: var(--p4); color: var(--p4); }
+  .ph4 .task { border-left: 2px solid var(--p4); }
+
+  .ph5 .phase-dot { background: rgba(255,184,106,0.15); border-color: var(--p5); color: var(--p5); }
+  .ph5 .task { border-left: 2px solid var(--p5); }
+
+  .ph6 .phase-dot { background: rgba(255,82,82,0.15); border-color: var(--p6); color: var(--p6); }
+  .ph6 .task { border-left: 2px solid var(--p6); }
+
+  .ph7 .phase-dot { background: rgba(106,255,204,0.15); border-color: var(--p7); color: var(--p7); }
+  .ph7 .task { border-left: 2px solid var(--p7); }
+
+  .ph8 .phase-dot { background: rgba(106,184,255,0.15); border-color: var(--p8); color: var(--p8); }
+  .ph8 .task { border-left: 2px solid var(--p8); }
+
+  .ph9 .phase-dot { background: rgba(76,175,80,0.15); border-color: var(--p9); color: var(--p9); }
+  .ph9 .task { border-left: 2px solid var(--p9); }
+
+  .ph10 .phase-dot { background: rgba(224,64,251,0.15); border-color: var(--p10); color: var(--p10); }
+  .ph10 .task { border-left: 2px solid var(--p10); }
+
+  .ph11 .phase-dot { background: rgba(76,175,80,0.2); border-color: var(--p11); color: var(--p11); }
+  .ph11 .phase-title { color: var(--p11); }
+  .ph11 .task { border-left: 2px solid var(--p11); }
+
+  /* Final launch card */
+  .launch-card {
+    background: linear-gradient(135deg, rgba(76,175,80,0.08), rgba(106,255,204,0.05));
+    border: 1px solid rgba(76,175,80,0.25);
+    border-radius: 10px;
+    padding: 20px 24px;
+  }
+
+  .launch-card .phase-title {
+    font-size: 22px;
+    color: var(--p11);
+  }
+
+  /* Stagger animation delays */
+  .phase:nth-child(1)  { animation-delay: 0.05s; }
+  .phase:nth-child(2)  { animation-delay: 0.10s; }
+  .phase:nth-child(3)  { animation-delay: 0.15s; }
+  .phase:nth-child(4)  { animation-delay: 0.20s; }
+  .phase:nth-child(5)  { animation-delay: 0.25s; }
+  .phase:nth-child(6)  { animation-delay: 0.30s; }
+  .phase:nth-child(7)  { animation-delay: 0.35s; }
+  .phase:nth-child(8)  { animation-delay: 0.40s; }
+  .phase:nth-child(9)  { animation-delay: 0.45s; }
+  .phase:nth-child(10) { animation-delay: 0.50s; }
+  .phase:nth-child(11) { animation-delay: 0.55s; }
+  .phase:nth-child(12) { animation-delay: 0.60s; }
+
+  /* Progress bar at top */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    width: 0%;
+    transition: width 0.1s;
+    z-index: 100;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 60px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  /* Connector arrow between phases */
+  .connector {
+    display: flex;
+    align-items: center;
+    margin: -32px 0 -8px 28px;
+    height: 40px;
+    position: relative;
+    z-index: 2;
+  }
+
+  @media (max-width: 600px) {
+    .tasks { grid-template-columns: 1fr 1fr; }
+    .header h1 { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+
+<div class="container">
+
+  <div class="header">
+    <div class="header-badge">FULL SAAS PRODUCT ROADMAP</div>
+    <h1>০ থেকে <span>Full Product</span></h1>
+    <p>// Golang + Next.js + AI · Ecommerce SaaS · Bangladesh Market</p>
+  </div>
+
+  <div class="timeline">
+
+    <!-- Phase 0 -->
+    <div class="phase ph0">
+      <div class="phase-dot">00</div>
+      <div class="phase-content">
+        <div class="phase-header">
+          <div class="phase-title">Environment Setup</div>
+          <div class="phase-time">WEEK 1–2</div>
+        </div>
+        <div class="phase-desc">সব কিছু install করুন, কাজের environment তৈরি করুন</div>
+        <div class="tasks">
+          <div class="task">
+            <div class="task-name">Golang Install</div>
+            <div class="task-sub">go.dev/dl</div>
+          </div>
+          <div class="task">
+            <div class="task-name">PostgreSQL + Docker</div>
+            <div class="task-sub">Local DB setup</div>
+          </div>
+          <div class="task">
+            <div class="task-name">VS Code + Go plugin</div>
+            <div class="task-sub">Editor ready</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Git + GitHub</div>
+            <div class="task-sub">Version control</div>
+          </div>
+        </div>
+        <div class="milestone"><span>Hello World API run করুন — শুরু হলো</span></div>
+      </div>
+    </div>
+
+    <!-- Phase 1 -->
+    <div class="phase ph1">
+      <div class="phase-dot">01</div>
+      <div class="phase-content">
+        <div class="phase-header">
+          <div class="phase-title">Golang Basics</div>
+          <div class="phase-time">MONTH 1</div>
+        </div>
+        <div class="phase-desc">Language শিখুন — syntax, types, concurrency</div>
+        <div class="tasks">
+          <div class="task">
+            <div class="task-name">Variables + Structs</div>
+            <div class="task-sub">Data types, functions</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Goroutines</div>
+            <div class="task-sub">Concurrency basics</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Interfaces + Errors</div>
+            <div class="task-sub">Error handling pattern</div>
+          </div>
+          <div class="task">
+            <div class="task-name">gobyexample.com</div>
+            <div class="task-sub">Free resource</div>
+          </div>
+        </div>
+        <div class="milestone"><span>Mini project: CLI todo app in Golang</span></div>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="phase ph2">
+      <div class="phase-dot">02</div>
+      <div class="phase-content">
+        <div class="phase-header">
+          <div class="phase-title">REST API with Gin</div>
+          <div class="phase-time">MONTH 1–2</div>
+        </div>
+        <div class="phase-desc">HTTP server, database connect, authentication</div>
+        <div class="tasks">
+          <div class="task">
+            <div class="task-name">Gin Framework</div>
+            <div class="task-sub">Routes + handlers</div>
+          </div>
+          <div class="task">
+            <div class="task-name">PostgreSQL + sqlc</div>
+            <div class="task-sub">DB queries</div>
+          </div>
+          <div class="task">
+            <div class="task-name">JWT Auth</div>
+            <div class="task-sub">Login + token</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Middleware</div>
+            <div class="task-sub">Request pipeline</div>
+          </div>
+        </div>
+        <div class="milestone"><span>Product CRUD API — add / list / delete working</span></div>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="phase ph3">
+      <div class="phase-dot">03</div>
+      <div class="phase-content">
+        <div class="phase-header">
+          <div class="phase-title">Multi-tenant Backend</div>
+          <div class="phase-time">MONTH 2–3</div>
+        </div>
+        <div class="phase-desc">একটা backend, অনেক client — core SaaS architecture</div>
+        <div class="tasks">
+          <div class="task">
+            <div class="task-name">Tenant System</div>
+            <div class="task-sub">tenant_id every table</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Subdomain Middleware</div>
+            <div class="task-sub">shop.platform.com</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Feature Flags</div>
+            <div class="task-sub">Per-tenant features</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Subscription Plans</div>
+            <div class="task-sub">Starter / Pro / Scale</div>
+          </div>
+        </div>
+        <div class="milestone"><span>২ টা tenant, isolated data, login working</span></div>
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="phase ph4">
+      <div class="phase-dot">04</div>
+      <div class="phase-content">
+        <div class="phase-header">
+          <div class="phase-title">Admin Panel (Frontend)</div>
+          <div class="phase-time">MONTH 3–4</div>
+        </div>
+        <div class="phase-desc">Client যেখান থেকে সব manage করবে</div>
+        <div class="tasks">
+          <div class="task">
+            <div class="task-name">Next.js Basics</div>
+            <div class="task-sub">React + routing</div>
+          </div>
+          <div class="task">
+            <div class="task-name">API Integration</div>
+            <div class="task-sub">Fetch + auth token</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Tailwind + shadcn</div>
+            <div class="task-sub">UI components</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Product Management</div>
+            <div class="task-sub">Add / edit / delete</div>
+          </div>
+        </div>
+        <div class="milestone"><span>Client login করে product add করতে পারছে</span></div>
+      </div>
+    </div>
+
+    <!-- Phase 5 -->
+    <div class="phase ph5">
+      <div class="phase-dot">05</div>
+      <div class="phase-content">
+        <div class="phase-header">
+          <div class="phase-title">Payment Gateway</div>
+          <div class="phase-time">MONTH 4–5</div>
+        </div>
+        <div class="phase-desc">বাংলাদেশি payment — bKash, Nagad, Card</div>
+        <div class="tasks">
+          <div class="task">
+            <div class="task-name">SSLCommerz</div>
+            <div class="task-sub">Card + all MFS</div>
+          </div>
+          <div class="task">
+            <div class="task-name">bKash + Nagad</div>
+            <div class="task-sub">Mobile wallet</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Webhook Handler</div>
+            <div class="task-sub">Payment callback</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Idempotency</div>
+            <div class="task-sub">No duplicate order</div>
+          </div>
+        </div>
+        <div class="milestone"><span>Real money transaction end to end working</span></div>
+      </div>
+    </div>
+
+    <!-- Phase 6 -->
+    <div class="phase ph6">
+      <div class="phase-dot">06</div>
+      <div class="phase-content">
+        <div class="phase-header">
+          <div class="phase-title">Delivery Integration</div>
+          <div class="phase-time">MONTH 5</div>
+        </div>
+        <div class="phase-desc">Order হলে automatic courier booking</div>
+        <div class="tasks">
+          <div class="task">
+            <div class="task-name">Steadfast API</div>
+            <div class="task-sub">শুরু এখানে</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Pathao API</div>
+            <div class="task-sub">তারপর এটা</div>
+          </div>
+          <div class="task">
+            <div class="task-name">RedX API</div>
+            <div class="task-sub">Third option</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Auto SMS Tracking</div>
+            <div class="task-sub">Customer notify</div>
+          </div>
+        </div>
+        <div class="milestone"><span>One click — parcel booked, customer SMS পেলো</span></div>
+      </div>
+    </div>
+
+    <!-- Phase 7 -->
+    <div class="phase ph7">
+      <div class="phase-dot">07</div>
+      <div class="phase-content">
+        <div class="phase-header">
+          <div class="phase-title">Theme System + Storefront</div>
+          <div class="phase-time">MONTH 6–7</div>
+        </div>
+        <div class="phase-desc">Public storefront + self-service onboarding</div>
+        <div class="tasks">
+          <div class="task">
+            <div class="task-name">Theme Engine</div>
+            <div class="task-sub">config.json per theme</div>
+          </div>
+          <div class="task">
+            <div class="task-name">10–12 Themes</div>
+            <div class="task-sub">Fashion, food, tech...</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Public Storefront</div>
+            <div class="task-sub">yourshop.platform.com</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Self Onboarding</div>
+            <div class="task-sub">Signup → live 5 min</div>
+          </div>
+        </div>
+        <div class="milestone"><span>প্রথম paying client নিজেই onboard হলো</span></div>
+      </div>
+    </div>
+
+    <!-- Phase 8 -->
+    <div class="phase ph8">
+      <div class="phase-dot">08</div>
+      <div class="phase-content">
+        <div class="phase-header">
+          <div class="phase-title">AI Content Generator</div>
+          <div class="phase-time">MONTH 7–8</div>
+        </div>
+        <div class="phase-desc">Product দিলে AI automatically post বানাবে</div>
+        <div class="tasks">
+          <div class="task">
+            <div class="task-name">Claude API</div>
+            <div class="task-sub">Golang integration</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Product → FB Post</div>
+            <div class="task-sub">Bengali + English</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Instagram Caption</div>
+            <div class="task-sub">Hashtags auto-gen</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Prompt Engineering</div>
+            <div class="task-sub">Quality output</div>
+          </div>
+        </div>
+        <div class="milestone"><span>"AI দিয়ে লিখুন" button — client wow হবে</span></div>
+      </div>
+    </div>
+
+    <!-- Phase 9 -->
+    <div class="phase ph9">
+      <div class="phase-dot">09</div>
+      <div class="phase-content">
+        <div class="phase-header">
+          <div class="phase-title">AI Auto-reply Bot</div>
+          <div class="phase-time">MONTH 9–10</div>
+        </div>
+        <div class="phase-desc">WhatsApp + Messenger এ AI customer service</div>
+        <div class="tasks">
+          <div class="task">
+            <div class="task-name">WhatsApp WABA</div>
+            <div class="task-sub">Meta API setup</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Webhook Handler</div>
+            <div class="task-sub">Receive messages</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Context-aware AI</div>
+            <div class="task-sub">Knows products + orders</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Auto Order Flow</div>
+            <div class="task-sub">Confirm → courier</div>
+          </div>
+        </div>
+        <div class="milestone"><span>Customer message করলে AI reply দিচ্ছে</span></div>
+      </div>
+    </div>
+
+    <!-- Phase 10 -->
+    <div class="phase ph10">
+      <div class="phase-dot">10</div>
+      <div class="phase-content">
+        <div class="phase-header">
+          <div class="phase-title">AI Analytics Dashboard</div>
+          <div class="phase-time">MONTH 10–11</div>
+        </div>
+        <div class="phase-desc">Data দেখায় না, বোঝায় — plain বাংলায়</div>
+        <div class="tasks">
+          <div class="task">
+            <div class="task-name">Sales Analytics</div>
+            <div class="task-sub">Revenue + trends</div>
+          </div>
+          <div class="task">
+            <div class="task-name">AI Plain Insights</div>
+            <div class="task-sub">"বিক্রি ২৩% বেড়েছে"</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Smart Alerts</div>
+            <div class="task-sub">Low stock + reorder</div>
+          </div>
+          <div class="task">
+            <div class="task-name">Best-time Post Suggest</div>
+            <div class="task-sub">When to post on FB</div>
+          </div>
+        </div>
+        <div class="milestone"><span>Dashboard এ AI বলছে কী করতে হবে</span></div>
+      </div>
+    </div>
+
+    <!-- Phase 11 — Launch -->
+    <div class="phase ph11">
+      <div class="phase-dot">11</div>
+      <div class="phase-content">
+        <div class="launch-card">
+          <div class="phase-header">
+            <div class="phase-title">🚀 Launch + Scale</div>
+            <div class="phase-time">MONTH 12</div>
+          </div>
+          <div class="phase-desc">Full product live — passive income শুরু</div>
+          <div class="tasks">
+            <div class="task">
+              <div class="task-name">10+ Paying Clients</div>
+              <div class="task-sub">Recurring subscription</div>
+            </div>
+            <div class="task">
+              <div class="task-name">Freelancer Partners</div>
+              <div class="task-sub">White-label resell</div>
+            </div>
+            <div class="task">
+              <div class="task-name">YouTube + Content</div>
+              <div class="task-sub">Inbound marketing</div>
+            </div>
+            <div class="task">
+              <div class="task-name">৳৫০,০০০+/মাস</div>
+              <div class="task-sub">Subscription revenue</div>
+            </div>
+          </div>
+          <div class="milestone"><span>Platform চলছে, আপনি ঘুমালেও income আসছে</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    // One phase at a time. One day at a time. &nbsp;·&nbsp; Start today with Phase 00.
+  </div>
+
+</div>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const scroll = window.scrollY;
+    const total = document.body.scrollHeight - window.innerHeight;
+    const pct = (scroll / total) * 100;
+    document.getElementById('progress').style.width = pct + '%';
+  });
+</script>
+</body>
+</html>
