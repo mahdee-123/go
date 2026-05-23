@@ -5,6 +5,7 @@ import (
 	"github.com/fatih/color"
 )
 
+
 func main() {
 	green := color.New(color.FgGreen)
 	green.Printf("Your lucky number is %d\n", random.Number())
