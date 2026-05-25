@@ -19,17 +19,21 @@ type Person struct {
 
 
 type Student struct {
-	Name string
+	 Person
 	Id int 
-	Email string
+
 }
 
 
-func registerStudent(name string, id int, email string ) Student {
+func registerStudent(name string, email string, age int, id int ) Student {
 	return Student {
-		Name : name, 
-		Id : id, 
-		Email : email,
+		Person : Person {
+			Name : name, 
+			Age : age, 
+			Email : email,
+		},
+
+		Id : id,
 	}
 }	
 
@@ -41,7 +45,15 @@ func New(name string , age int, email string) *Person {
 		Email : email,
 	}
 }
+//  value reciever vs pointer reciever 
+// value reciever
+func (p Person) greet()	{
+	fmt.Println("ki obostha", p.Name)
+}
 
+func (p *Person) changeName(newName string) {
+	p.Name = newName
+}
 
 func retrieveEmail(name string) string {
 	return name + "@gmail.com"
@@ -63,8 +75,8 @@ func main() {
 	fmt.Println(p1)
 
 	// using factory function
-	registerStudent("Arnob", 10, "a@b.com")
-
+	student1 := registerStudent("Arnob", "a@b.com",10,1110 )
+	fmt.Println("student : ",student1.Name)
 	p3 := New("Arnob", 35, "as@bsd.com")
 	p4 := New("df", 2, "as@33.com")
 	fmt.Println(p3)
@@ -77,6 +89,14 @@ func main() {
 	// p5.Name = "akkhor"
 	// p5.Age = 39
 	// p5.Email = "a@bsdf.com"
-	fmt.Printf("%p",p5)
-	
+		fmt.Printf("%p",p5)	
+		fmt.Println()
+
+
+	p2.greet()
+	fmt.Println(p2.Name)
+	p2.changeName("raven returns")
+	fmt.Println(p2.Name)
+
+	testOverriding()
 }

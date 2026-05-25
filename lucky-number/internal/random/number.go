@@ -32,7 +32,7 @@ func Number() int {
 	}
 	i := 0
 	
-	for  i<10 {
+	for i<10 {
 		fmt.Println(i)
 		i++
 	} 
@@ -40,8 +40,6 @@ func Number() int {
 	// infinite loop 
 
 	nums := []int{10, 20, 30}
-
-
 	for index, value := range nums {
 		fmt.Println(index, value)
 	}
