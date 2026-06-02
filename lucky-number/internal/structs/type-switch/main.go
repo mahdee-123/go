@@ -4,8 +4,11 @@ import "fmt"
 
 func main() {
 	var value any
+
+	
 	value = 10
 	// ugly code
+	
 	// if i, ok := v.(int); ok {
 	// 	fmt.Println(i)
 	// } else if s, ok := v.(string); ok {
@@ -26,3 +29,4 @@ func main() {
 			fmt.Println("unknown")
 }
 }
+

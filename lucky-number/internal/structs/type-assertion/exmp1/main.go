@@ -43,15 +43,12 @@ func main() {
 		// type assertion 
 		v, ok := value.(string)
 		// fmt.Println(len(v))
-		
 		if ok == false {
 			fmt.Println("type assertion is wrong")
 		} else {
 			fmt.Println(v)
 		}
-
 		// / type assertion in struct 
 		person := p.(Person) 
-
 		fmt.Println(person.Name)
 }
