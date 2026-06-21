@@ -1,0 +1,578 @@
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    font-family: var(--font-sans);
+  }
+  .tracker {
+    padding: 1rem 0;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .progress-bar {
+    height: 6px;
+    background: var(--color-background-secondary);
+    border-radius: 99px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: #1d9e75;
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+  .stats {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  .stat {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 0.6rem 1rem;
+    flex: 1;
+    min-width: 80px;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    margin-top: 2px;
+  }
+  .level-section {
+    margin-bottom: 1.5rem;
+  }
+  .level-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    user-select: none;
+  }
+  .level-badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 99px;
+  }
+  .badge-beginner {
+    background: #e1f5ee;
+    color: #0f6e56;
+  }
+  .badge-core {
+    background: #e6f1fb;
+    color: #185fa5;
+  }
+  .badge-intermediate {
+    background: #faeeda;
+    color: #854f0b;
+  }
+  .badge-advanced {
+    background: #fcebeb;
+    color: #a32d2d;
+  }
+  .level-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    flex: 1;
+  }
+  .level-count {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+  }
+  .chevron {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    transition: transform 0.2s;
+  }
+  .chevron.open {
+    transform: rotate(180deg);
+  }
+  .problems-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .problem-card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-md);
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: border-color 0.15s;
+  }
+  .problem-card:hover {
+    border-color: var(--color-border-secondary);
+  }
+  .problem-card.done {
+    opacity: 0.6;
+  }
+  .check-btn {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-border-secondary);
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+    transition: all 0.15s;
+  }
+  .check-btn.checked {
+    background: #1d9e75;
+    border-color: #1d9e75;
+  }
+  .check-icon {
+    color: white;
+    font-size: 11px;
+    display: none;
+  }
+  .check-btn.checked .check-icon {
+    display: block;
+  }
+  .problem-content {
+    flex: 1;
+  }
+  .problem-title {
+    font-size: 14px;
+    color: var(--color-text-primary);
+    line-height: 1.5;
+  }
+  .problem-hint {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-top: 4px;
+    display: none;
+    line-height: 1.5;
+  }
+  .problem-hint.visible {
+    display: block;
+  }
+  .hint-btn {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 4px;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .hint-btn:hover {
+    color: var(--color-text-primary);
+  }
+  .collapsed {
+    display: none;
+  }
+</style>
+
+<div class="tracker">
+  <div class="header">
+    <div>
+      <h2
+        style="
+          font-size: 18px;
+          font-weight: 500;
+          color: var(--color-text-primary);
+        "
+      >
+        Go practice problems
+      </h2>
+      <p
+        style="
+          font-size: 13px;
+          color: var(--color-text-secondary);
+          margin-top: 2px;
+        "
+      >
+        Backend-focused · Level by level
+      </p>
+    </div>
+    <button
+      onclick="resetAll()"
+      style="
+        font-size: 12px;
+        color: var(--color-text-secondary);
+        background: none;
+        border: none;
+        cursor: pointer;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      "
+    >
+      Reset all
+    </button>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num" id="s-done">0</div>
+      <div class="stat-label">Solved</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="s-total">0</div>
+      <div class="stat-label">Total</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="s-pct">0%</div>
+      <div class="stat-label">Progress</div>
+    </div>
+  </div>
+
+  <div id="levels"></div>
+</div>
+
+<script>
+  const levels = [
+    {
+      id: 'beginner',
+      title: 'Level 1 — Variables, types & functions',
+      badge: 'Beginner',
+      badgeClass: 'badge-beginner',
+      problems: [
+        {
+          title:
+            'এমন একটা function লেখো যেটা দুটো integer নিয়ে বড়টা return করে।',
+          hint: 'if-else ব্যবহার করো, multiple return value দরকার নেই।',
+        },
+        {
+          title:
+            'একটা function লেখো যেটা Celsius temperature নিয়ে Fahrenheit-এ convert করে return করে।',
+          hint: 'formula: (c * 9/5) + 32',
+        },
+        {
+          title:
+            'একটা string slice নিয়ে সব elements print করো for loop দিয়ে।',
+          hint: 'range keyword ব্যবহার করো।',
+        },
+        {
+          title:
+            'একটা map তৈরি করো যেখানে student name → score আছে। সব names ও scores print করো।',
+          hint: 'for k, v := range myMap {...}',
+        },
+        {
+          title:
+            'একটা variadic function লেখো যেটা যেকোনো সংখ্যক integer এর sum return করে।',
+          hint: 'func sum(nums ...int) int',
+        },
+        {
+          title:
+            'FizzBuzz লেখো — 1 থেকে 50 পর্যন্ত। 3 এর গুণিতকে Fizz, 5 এর গুণিতকে Buzz, দুটোতে FizzBuzz।',
+          hint: '% operator এবং if-else if chain।',
+        },
+        {
+          title:
+            'একটা function লেখো যেটা একটা string কে reverse করে return করে।',
+          hint: 'string কে []rune-এ convert করো, তারপর reverse করো।',
+        },
+        {
+          title: 'Fibonacci sequence এর প্রথম 10টা number print করো।',
+          hint: 'loop বা recursion যেকোনোটা চলবে। loop বেশি Go-ish।',
+        },
+      ],
+    },
+    {
+      id: 'core',
+      title: 'Level 2 — Pointers & structs',
+      badge: 'Core',
+      badgeClass: 'badge-core',
+      problems: [
+        {
+          title:
+            'একটা Person struct বানাও (Name, Age)। একটা function লেখো যেটা *Person নিয়ে age 1 বাড়ায়।',
+          hint: 'pointer receiver ছাড়া original struct change হবে না।',
+        },
+        {
+          title:
+            'একটা Rectangle struct বানাও। Method হিসেবে Area() ও Perimeter() যোগ করো।',
+          hint: 'func (r Rectangle) Area() float64 {...}',
+        },
+        {
+          title:
+            'দুটো variable swap করো pointer ব্যবহার করে — temporary variable ছাড়া।',
+          hint: '*a, *b = *b, *a',
+        },
+        {
+          title: 'একটা Student struct এর slice বানাও। GPA অনুযায়ী sort করো।',
+          hint: 'sort.Slice() ও less function ব্যবহার করো।',
+        },
+        {
+          title:
+            'একটা function লেখো যেটা একটা int-এর pointer নিয়ে value double করে — কিছু return না করেই।',
+          hint: 'function এর ভেতরে *n = *n * 2',
+        },
+        {
+          title:
+            'Struct embedding দিয়ে Animal ও Dog বানাও। Dog এ Bark() method থাকবে।',
+          hint: 'type Dog struct { Animal }',
+        },
+        {
+          title:
+            'একটা linked list node বানাও struct দিয়ে। 3টা node connect করে values print করো।',
+          hint: 'type Node struct { Val int; Next *Node }',
+        },
+        {
+          title:
+            'একটা function লেখো যেটা দুটো struct compare করে সমান কিনা বলে — reflect ছাড়া।',
+          hint: 'field by field manually compare করো।',
+        },
+      ],
+    },
+    {
+      id: 'intermediate',
+      title: 'Level 3 — Interfaces & error handling',
+      badge: 'Intermediate',
+      badgeClass: 'badge-intermediate',
+      problems: [
+        {
+          title:
+            'একটা Shape interface বানাও (Area() float64)। Circle ও Square দিয়ে implement করো।',
+          hint: 'Go-তে explicit implements নেই — method থাকলেই হয়।',
+        },
+        {
+          title:
+            'একটা function লেখো যেটা string কে integer-এ convert করে, error সহ return করে।',
+          hint: 'strconv.Atoi() ব্যবহার করো।',
+        },
+        {
+          title:
+            'Custom error type বানাও। একটা function থেকে সেই error return করো ও handle করো।',
+          hint: 'type MyError struct{} func (e MyError) Error() string {...}',
+        },
+        {
+          title: 'errors.As() দিয়ে specific error type check করো।',
+          hint: 'var e *MyError; if errors.As(err, &e) {...}',
+        },
+        {
+          title:
+            'একটা Logger interface বানাও। ConsoleLogger ও FileLogger (fake) দিয়ে implement করো।',
+          hint: 'interface দিয়ে code যেন implementation জানতে না পারে।',
+        },
+        {
+          title:
+            'একটা function লেখো যেটা file read করে, error properly wrap করে return করে।',
+          hint: "fmt.Errorf('reading file: %w', err)",
+        },
+        {
+          title: 'Stringer interface implement করো একটা custom type-এ।',
+          hint: 'func (t MyType) String() string {...} — fmt.Println() automatically call করবে।',
+        },
+        {
+          title:
+            'একটা function chain লেখো যেখানে প্রতিটা step error return করতে পারে। সব error handle করো।',
+          hint: 'Go-তে idiomatic: if err != nil { return err } প্রতিটা step-এ।',
+        },
+      ],
+    },
+    {
+      id: 'advanced',
+      title: 'Level 4 — Goroutines & channels',
+      badge: 'Advanced',
+      badgeClass: 'badge-advanced',
+      problems: [
+        {
+          title:
+            '5টা goroutine চালাও, প্রতিটা তার number print করুক। WaitGroup দিয়ে সব শেষ হওয়া wait করো।',
+          hint: 'var wg sync.WaitGroup; wg.Add(5); defer wg.Done()',
+        },
+        {
+          title:
+            'একটা channel বানাও। goroutine দিয়ে 1 থেকে 5 পাঠাও, main থেকে receive করো।',
+          hint: 'ch := make(chan int); go func() { ch <- 1 }()',
+        },
+        {
+          title:
+            'Fan-out pattern: একটা jobs channel থেকে 3টা worker goroutine কাজ নিক।',
+          hint: 'for job := range jobs { ... } প্রতিটা worker-এ।',
+        },
+        {
+          title:
+            'select statement দিয়ে দুটো channel থেকে যেটা আগে আসে সেটা handle করো।',
+          hint: 'select { case v := <-ch1: ... case v := <-ch2: ... }',
+        },
+        {
+          title:
+            'context.WithTimeout দিয়ে একটা operation cancel করো নির্দিষ্ট সময়ের পর।',
+          hint: 'ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)',
+        },
+        {
+          title:
+            'Mutex দিয়ে একটা shared counter কে race condition থেকে বাঁচাও।',
+          hint: 'var mu sync.Mutex; mu.Lock(); counter++; mu.Unlock()',
+        },
+        {
+          title:
+            'Pipeline pattern: generate → square → print। প্রতিটা stage আলাদা goroutine।',
+          hint: 'প্রতিটা stage input channel নিক, output channel return করুক।',
+        },
+        {
+          title:
+            'errgroup দিয়ে multiple goroutine চালাও। যেকোনো একটা fail করলে সব cancel হোক।',
+          hint: 'golang.org/x/sync/errgroup package।',
+        },
+      ],
+    },
+  ]
+
+  const STORAGE_KEY = 'go_problems_v1'
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY)
+      return raw ? JSON.parse(raw) : {}
+    } catch {
+      return {}
+    }
+  }
+
+  function saveState(state) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+    } catch {}
+  }
+
+  let state = loadState()
+  let collapsed = {}
+
+  function totalProblems() {
+    return levels.reduce((a, l) => a + l.problems.length, 0)
+  }
+
+  function solvedCount() {
+    return Object.values(state).filter(Boolean).length
+  }
+
+  function updateStats() {
+    const total = totalProblems()
+    const done = solvedCount()
+    const pct = total ? Math.round((done / total) * 100) : 0
+    document.getElementById('s-done').textContent = done
+    document.getElementById('s-total').textContent = total
+    document.getElementById('s-pct').textContent = pct + '%'
+    document.getElementById('prog').style.width = pct + '%'
+  }
+
+  function toggleCheck(key, btn) {
+    state[key] = !state[key]
+    saveState(state)
+    btn.classList.toggle('checked', state[key])
+    const card = btn.closest('.problem-card')
+    card.classList.toggle('done', state[key])
+    updateStats()
+  }
+
+  function toggleHint(hintEl, btn) {
+    const vis = hintEl.classList.toggle('visible')
+    btn.textContent = vis ? 'hint লুকাও' : 'hint দেখো'
+  }
+
+  function toggleLevel(levelId) {
+    collapsed[levelId] = !collapsed[levelId]
+    const list = document.getElementById('list-' + levelId)
+    const chev = document.getElementById('chev-' + levelId)
+    list.classList.toggle('collapsed', collapsed[levelId])
+    chev.classList.toggle('open', !collapsed[levelId])
+  }
+
+  function resetAll() {
+    if (!confirm('সব progress মুছে দেবো?')) return
+    state = {}
+    saveState(state)
+    document
+      .querySelectorAll('.check-btn')
+      .forEach((b) => b.classList.remove('checked'))
+    document
+      .querySelectorAll('.problem-card')
+      .forEach((c) => c.classList.remove('done'))
+    updateStats()
+  }
+
+  function render() {
+    const container = document.getElementById('levels')
+    container.innerHTML = ''
+
+    levels.forEach((level) => {
+      const levelDone = level.problems.filter(
+        (_, i) => state[level.id + '-' + i],
+      ).length
+      const section = document.createElement('div')
+      section.className = 'level-section'
+
+      const header = document.createElement('div')
+      header.className = 'level-header'
+      header.onclick = () => toggleLevel(level.id)
+      header.innerHTML = `
+      <span class="level-badge ${level.badgeClass}">${level.badge}</span>
+      <span class="level-title">${level.title}</span>
+      <span class="level-count">${levelDone}/${level.problems.length}</span>
+      <i class="ti ti-chevron-down chevron open" id="chev-${level.id}" aria-hidden="true"></i>
+    `
+
+      const list = document.createElement('div')
+      list.className = 'problems-list'
+      list.id = 'list-' + level.id
+
+      level.problems.forEach((p, i) => {
+        const key = level.id + '-' + i
+        const done = !!state[key]
+        const card = document.createElement('div')
+        card.className = 'problem-card' + (done ? ' done' : '')
+
+        const checkBtn = document.createElement('button')
+        checkBtn.className = 'check-btn' + (done ? ' checked' : '')
+        checkBtn.setAttribute('aria-label', 'Mark as solved')
+        checkBtn.innerHTML =
+          '<i class="ti ti-check check-icon" aria-hidden="true"></i>'
+        checkBtn.onclick = () => toggleCheck(key, checkBtn)
+
+        const content = document.createElement('div')
+        content.className = 'problem-content'
+
+        const hintId = 'hint-' + key
+        content.innerHTML = `
+        <div class="problem-title">${i + 1}. ${p.title}</div>
+        <button class="hint-btn" onclick="toggleHint(document.getElementById('${hintId}'), this)">hint দেখো</button>
+        <div class="problem-hint" id="${hintId}">💡 ${p.hint}</div>
+      `
+
+        card.appendChild(checkBtn)
+        card.appendChild(content)
+        list.appendChild(card)
+      })
+
+      section.appendChild(header)
+      section.appendChild(list)
+      container.appendChild(section)
+    })
+
+    updateStats()
+  }
+
+  render()
+</script>

@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Animal interface {
 	MakeSound() string
@@ -23,7 +25,7 @@ func (d Dog) MakeSound() string {
 }
 func main() {
 	animals := []Animal{Dog{Name: "Dog"}, Cat{Name: "Cat"}}
-
+	const v  = "helllo"
 	for _, animal := range animals {
 		if dog, ok := animal.(Dog); ok {
 			fmt.Println(dog.Name)
@@ -32,3 +34,5 @@ func main() {
 		}
 	}
 }
+
+

@@ -1,0 +1,3 @@
+1. sim card .... 
+2. eat diet 
+3. device 

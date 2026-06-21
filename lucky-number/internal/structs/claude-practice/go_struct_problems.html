@@ -1,0 +1,357 @@
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  .tracker {
+    padding: 1rem 0;
+    font-family: var(--font-sans);
+  }
+  .progress-bar {
+    height: 5px;
+    background: var(--color-background-secondary);
+    border-radius: 99px;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: #185fa5;
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+  .stats {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+  .stat {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 0.5rem 1rem;
+    flex: 1;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    margin-top: 1px;
+  }
+  .section {
+    margin-bottom: 1.25rem;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.6rem;
+    padding-left: 2px;
+  }
+  .card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-md);
+    padding: 0.75rem 1rem;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 6px;
+    transition: border-color 0.15s;
+  }
+  .card:hover {
+    border-color: var(--color-border-secondary);
+  }
+  .card.done {
+    opacity: 0.55;
+  }
+  .check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-border-secondary);
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    transition: all 0.15s;
+  }
+  .check.on {
+    background: #185fa5;
+    border-color: #185fa5;
+  }
+  .check i {
+    color: white;
+    font-size: 11px;
+    display: none;
+  }
+  .check.on i {
+    display: block;
+  }
+  .body {
+    flex: 1;
+  }
+  .q {
+    font-size: 13.5px;
+    color: var(--color-text-primary);
+    line-height: 1.6;
+  }
+  .concept {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    margin-bottom: 5px;
+    background: #e6f1fb;
+    color: #185fa5;
+  }
+  .hint-toggle {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 5px;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .hint {
+    display: none;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-top: 5px;
+    line-height: 1.6;
+    background: var(--color-background-secondary);
+    border-radius: 6px;
+    padding: 6px 10px;
+  }
+  .hint.show {
+    display: block;
+  }
+</style>
+
+<div class="tracker">
+  <div style="margin-bottom: 1.25rem">
+    <h2
+      style="
+        font-size: 17px;
+        font-weight: 500;
+        color: var(--color-text-primary);
+      "
+    >
+      Go structs — 15 problems
+    </h2>
+    <p
+      style="
+        font-size: 12px;
+        color: var(--color-text-secondary);
+        margin-top: 3px;
+      "
+    >
+      Basics থেকে deep concepts পর্যন্ত
+    </p>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num" id="s1">0</div>
+      <div class="stat-label">Solved</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">15</div>
+      <div class="stat-label">Total</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="s2">0%</div>
+      <div class="stat-label">Done</div>
+    </div>
+  </div>
+
+  <div id="root"></div>
+</div>
+
+<script>
+  const data = [
+    {
+      section: 'Struct basics',
+      items: [
+        {
+          concept: 'struct declaration',
+          q: 'একটা Book struct বানাও — Title (string), Author (string), Pages (int), Price (float64)। দুটো book তৈরি করো এবং সব fields print করো।',
+          hint: "type Book struct { Title string; Author string } — তারপর b := Book{Title: 'Go Programming', Author: 'Alan'}",
+        },
+        {
+          concept: 'constructor function',
+          q: 'উপরের Book struct এর জন্য একটা NewBook() constructor function লেখো যেটা সব field validate করে। Pages ≤ 0 বা Price < 0 হলে error return করবে।',
+          hint: 'func NewBook(title, author string, pages int, price float64) (Book, error) — Go-তে class নেই, constructor মানে just একটা function।',
+        },
+        {
+          concept: 'value vs pointer receiver',
+          q: 'Book-এ দুটো method লেখো: Describe() string (value receiver) এবং ApplyDiscount(pct float64) (pointer receiver)। পার্থক্য বোঝো — কোনটা original change করে, কোনটা করে না।',
+          hint: 'func (b Book) Describe() string — copy পায়। func (b *Book) ApplyDiscount(pct float64) — original পায়।',
+        },
+        {
+          concept: 'anonymous struct',
+          q: 'Variable declare না করে সরাসরি একটা anonymous struct বানাও যেটায় config data রাখবে (host string, port int)। Real use case: quick one-off data grouping।',
+          hint: "cfg := struct{ Host string; Port int }{Host: 'localhost', Port: 8080}",
+        },
+      ],
+    },
+    {
+      section: 'Struct & memory',
+      items: [
+        {
+          concept: 'pass by value',
+          q: 'একটা function লেখো updateAge(p Person, age int) যেটা Person এর age change করার চেষ্টা করে। তারপর দেখাও যে original Person unchanged — কারণ ব্যাখ্যা করো comment-এ।',
+          hint: 'Go-তে struct pass by value — function একটা copy পায়। Original বদলাতে হলে pointer দিতে হবে।',
+        },
+        {
+          concept: 'pass by pointer',
+          q: 'উপরের problem টা fix করো। updateAge কে *Person নিতে দাও। এখন original change হবে। দুটো version পাশাপাশি রেখে compare করো।',
+          hint: 'func updateAge(p *Person, age int) { p.Age = age } — call করো: updateAge(&person, 25)',
+        },
+        {
+          concept: 'struct size & fields',
+          q: 'একটা struct বানাও যেখানে bool, int64, bool আছে। আরেকটা বানাও int64, bool, bool দিয়ে। unsafe.Sizeof() দিয়ে দুটোর size print করো। কেন size আলাদা?',
+          hint: 'Memory alignment/padding এর কারণে। Go compiler fields কে align করে। Field order matter করে।',
+        },
+      ],
+    },
+    {
+      section: 'Embedding & composition',
+      items: [
+        {
+          concept: 'struct embedding',
+          q: 'Address struct বানাও (City, Country)। Person struct-এ Address embed করো। দেখাও যে p.City সরাসরি access করা যায় — p.Address.City না লিখেও।',
+          hint: 'type Person struct { Name string; Address } — embed করলে fields promoted হয়।',
+        },
+        {
+          concept: 'method promotion',
+          q: 'Animal struct বানাও Breathe() method সহ। Dog struct-এ Animal embed করো এবং Bark() method যোগ করো। দেখাও যে dog.Breathe() এবং dog.Bark() দুটোই কাজ করে।',
+          hint: 'Embedded struct এর methods promoted হয়। এটাই Go-র inheritance এর বিকল্প।',
+        },
+        {
+          concept: 'embedding vs field',
+          q: 'দুটো version লেখো — একটায় Engine struct কে Car-এ embed করো, আরেকটায় named field হিসেবে রাখো (Engine Engine)। দেখাও কোথায় syntax আলাদা হয়।',
+          hint: 'Embed: car.Start() — Named field: car.Engine.Start(). Embed মানে promoted access।',
+        },
+      ],
+    },
+    {
+      section: 'Tags & JSON',
+      items: [
+        {
+          concept: 'struct tags',
+          q: 'একটা User struct বানাও JSON tags সহ — id, name, email, created_at। encoding/json দিয়ে JSON marshal করো এবং দেখাও Go field names এর বদলে tag names আসছে।',
+          hint: 'Name string `json:"name"` — backtick দিয়ে tag লেখা হয়।',
+        },
+        {
+          concept: 'omitempty & ignore',
+          q: 'User struct-এ optional field যোগ করো (Bio string) যেটা empty হলে JSON-এ আসবে না। আরেকটা field (Password) যেটা কখনো JSON-এ যাবে না।',
+          hint: 'Bio string `json:"bio,omitempty"` — Password string `json:"-"`',
+        },
+        {
+          concept: 'JSON unmarshal',
+          q: 'একটা JSON string নাও: {"name":"Arnob","age":24,"city":"Sylhet"}। এটাকে একটা struct-এ unmarshal করো এবং fields access করো।',
+          hint: 'var u User; json.Unmarshal([]byte(jsonStr), &u) — pointer দিতে হবে।',
+        },
+      ],
+    },
+    {
+      section: 'Advanced patterns',
+      items: [
+        {
+          concept: 'functional options',
+          q: 'একটা Server struct বানাও (Host, Port, Timeout)। NewServer() function লেখো যেটা functional options pattern follow করে — caller যেটুকু দরকার সেটুকুই set করবে, বাকিটা default।',
+          hint: 'type Option func(*Server) — WithPort(p int) Option { return func(s *Server){ s.Port = p } }',
+        },
+        {
+          concept: 'struct as map key',
+          q: 'Point struct বানাও (X, Y int)। এটাকে map-এর key হিসেবে ব্যবহার করো। তারপর দেখাও কোন ধরনের struct map key হতে পারে না এবং কেন।',
+          hint: 'Comparable types only — slice বা map field থাকলে struct map key হতে পারবে না।',
+        },
+        {
+          concept: 'interface + struct',
+          q: 'Stringer interface implement করো একটা struct-এ নিজে না জেনেই — শুধু String() string method যোগ করো। fmt.Println() দিয়ে print করলে automatically সেই method call হবে।',
+          hint: "func (p Person) String() string { return fmt.Sprintf('%s (%d)', p.Name, p.Age) } — Go এর implicit interface।",
+        },
+      ],
+    },
+  ]
+
+  const SK = 'go_struct_15'
+  let state = {}
+  try {
+    state = JSON.parse(localStorage.getItem(SK)) || {}
+  } catch {}
+
+  function save() {
+    try {
+      localStorage.setItem(SK, JSON.stringify(state))
+    } catch {}
+  }
+
+  function updateStats() {
+    const done = Object.values(state).filter(Boolean).length
+    const pct = Math.round((done / 15) * 100)
+    document.getElementById('s1').textContent = done
+    document.getElementById('s2').textContent = pct + '%'
+    document.getElementById('prog').style.width = pct + '%'
+  }
+
+  function render() {
+    const root = document.getElementById('root')
+    let idx = 0
+    data.forEach((sec) => {
+      const secEl = document.createElement('div')
+      secEl.className = 'section'
+      secEl.innerHTML = `<div class="section-label">${sec.section}</div>`
+      sec.items.forEach((item) => {
+        const key = 'p' + idx
+        const done = !!state[key]
+        const hintId = 'h' + idx
+        const card = document.createElement('div')
+        card.className = 'card' + (done ? ' done' : '')
+        card.innerHTML = `
+        <button class="check${done ? ' on' : ''}" data-key="${key}" aria-label="mark solved"><i class="ti ti-check" aria-hidden="true"></i></button>
+        <div class="body">
+          <div class="concept">${item.concept}</div>
+          <div class="q">${idx + 1}. ${item.q}</div>
+          <button class="hint-toggle" onclick="toggleHint('${hintId}', this)">hint দেখো</button>
+          <div class="hint" id="${hintId}">💡 ${item.hint}</div>
+        </div>
+      `
+        card.querySelector('.check').onclick = function () {
+          state[key] = !state[key]
+          save()
+          this.classList.toggle('on', state[key])
+          card.classList.toggle('done', state[key])
+          updateStats()
+        }
+        secEl.appendChild(card)
+        idx++
+      })
+      root.appendChild(secEl)
+    })
+    updateStats()
+  }
+
+  function toggleHint(id, btn) {
+    const el = document.getElementById(id)
+    const vis = el.classList.toggle('show')
+    btn.textContent = vis ? 'hint লুকাও' : 'hint দেখো'
+  }
+
+  render()
+</script>

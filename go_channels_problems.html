@@ -1,0 +1,440 @@
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  .app {
+    padding: 1rem 0;
+    font-family: var(--font-sans);
+  }
+  .progress-bar {
+    height: 5px;
+    background: var(--color-background-secondary);
+    border-radius: 99px;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: #0891b2;
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+  .stats {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+  .stat {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 0.5rem 1rem;
+    flex: 1;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    margin-top: 1px;
+  }
+  .section {
+    margin-bottom: 1.5rem;
+  }
+  .sec-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0.6rem;
+    cursor: pointer;
+    user-select: none;
+  }
+  .sec-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    flex: 1;
+  }
+  .sec-sub {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+  }
+  .sec-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .chevron {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    transition: transform 0.2s;
+  }
+  .chevron.open {
+    transform: rotate(180deg);
+  }
+  .collapsed {
+    display: none;
+  }
+  .card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-md);
+    padding: 0.75rem 1rem;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .card:hover {
+    border-color: var(--color-border-secondary);
+  }
+  .card.done {
+    opacity: 0.5;
+  }
+  .check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-border-secondary);
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    transition: all 0.15s;
+  }
+  .check.on {
+    background: #0891b2;
+    border-color: #0891b2;
+  }
+  .check i {
+    color: white;
+    font-size: 11px;
+    display: none;
+  }
+  .check.on i {
+    display: block;
+  }
+  .body {
+    flex: 1;
+  }
+  .tag-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 5px;
+  }
+  .tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 99px;
+  }
+  .tag-concept {
+    background: #cffafe;
+    color: #0e7490;
+  }
+  .tag-when {
+    background: #f0fdf4;
+    color: #166534;
+    font-style: italic;
+  }
+  .q {
+    font-size: 13.5px;
+    color: var(--color-text-primary);
+    line-height: 1.65;
+  }
+  .hint-btn {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 6px;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .hint {
+    display: none;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-top: 5px;
+    line-height: 1.65;
+    background: var(--color-background-secondary);
+    border-radius: 6px;
+    padding: 7px 10px;
+  }
+  .hint.show {
+    display: block;
+  }
+  .why {
+    font-size: 11.5px;
+    color: #0891b2;
+    margin-top: 4px;
+    font-style: italic;
+  }
+</style>
+
+<div class="app">
+  <div style="margin-bottom: 1.25rem">
+    <h2
+      style="
+        font-size: 17px;
+        font-weight: 500;
+        color: var(--color-text-primary);
+      "
+    >
+      Go channels — 15 problems
+    </h2>
+    <p
+      style="
+        font-size: 12px;
+        color: var(--color-text-secondary);
+        margin-top: 3px;
+      "
+    >
+      Goroutine communication — step by step
+    </p>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num" id="s1">0</div>
+      <div class="stat-label">Solved</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">15</div>
+      <div class="stat-label">Total</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="s2">0%</div>
+      <div class="stat-label">Done</div>
+    </div>
+  </div>
+  <div id="root"></div>
+</div>
+
+<script>
+  const sections = [
+    {
+      title: 'Channel basics',
+      dot: '#0891B2',
+      sub: 'Problems 1–4',
+      items: [
+        {
+          concept: 'unbuffered channel',
+          when: 'সবসময় শুরুতে',
+          q: 'একটা unbuffered channel বানাও (chan string)। একটা goroutine থেকে একটা message পাঠাও, main এ receive করো। লক্ষ্য করো — receive না হওয়া পর্যন্ত send block থাকে।',
+          hint: "ch := make(chan string); go func(){ ch <- 'hello' }(); msg := <-ch; fmt.Println(msg)",
+        },
+        {
+          concept: 'buffered channel',
+          when: 'sender কে block না করিয়ে কিছু queue রাখতে চাইলে',
+          q: 'একটা buffered channel বানাও (capacity 3)। ৩টা value send করো block না হয়ে, তারপর receive করো একটা একটা করে। ৪র্থ value send করলে কী হয় দেখো।',
+          hint: 'ch := make(chan int, 3); ch<-1; ch<-2; ch<-3 — block হবে না কারণ buffer full না। ৪র্থটায় block হবে যতক্ষণ না কেউ receive করে।',
+        },
+        {
+          concept: 'channel direction',
+          when: 'function signature এ explicit করতে',
+          q: 'দুটো function লেখো: send(ch chan<- int, v int) (শুধু send করতে পারবে) এবং receive(ch <-chan int) int (শুধু receive করতে পারবে)। একই channel দুটো function এ পাঠাও।',
+          hint: 'chan<- মানে send-only, <-chan মানে receive-only — compiler এনফোর্স করে ভুল direction এ ব্যবহার করলে error দেয়।',
+        },
+        {
+          concept: 'closing channel',
+          when: 'sender জানায় আর data আসবে না',
+          q: 'একটা channel এ ৫টা value পাঠাও, তারপর close(ch) করো। Receiver এ for-range দিয়ে সব value নাও — দেখো close হওয়ার পর loop নিজে থেকে শেষ হয়ে যায়।',
+          hint: 'for v := range ch { fmt.Println(v) } — channel close হলে range automatically বের হয়ে আসে, panic হয় না।',
+        },
+      ],
+    },
+    {
+      title: 'Patterns with channels',
+      dot: '#7C3AED',
+      sub: 'Problems 5–8',
+      items: [
+        {
+          concept: 'comma-ok receive',
+          when: 'channel closed কিনা জানতে চাইলে',
+          q: 'একটা channel close করার পর comma-ok pattern দিয়ে receive করো: v, ok := <-ch। দেখাও ok false হলে বুঝবে channel closed এবং আর data নেই।',
+          hint: "v, ok := <-ch; if !ok { fmt.Println('channel closed') } — closed channel থেকে receive করলে zero value + false পাওয়া যায়, panic হয় না।",
+        },
+        {
+          concept: 'worker pool',
+          when: 'fixed সংখ্যক worker দিয়ে অনেক কাজ ভাগ করতে',
+          q: 'একটা jobs channel ও একটা results channel বানাও। ৩টা worker goroutine চালাও যারা jobs channel থেকে কাজ নেয়, process করে results channel এ পাঠায়। ৯টা job পাঠাও, সব results collect করো।',
+          hint: 'jobs := make(chan int, 9); results := make(chan int, 9) — ৩টা worker goroutine, প্রতিটা: for j := range jobs { results <- j*2 }',
+        },
+        {
+          concept: 'fan-in',
+          when: 'multiple source থেকে একটা channel এ merge করতে',
+          q: 'দুটো আলাদা goroutine থেকে data generate করো (দুটো আলাদা channel এ)। একটা merge function লেখো যেটা দুটো channel কে একটা single output channel এ merge করে।',
+          hint: 'merged := make(chan int); go func(){ for v := range ch1 { merged <- v } }(); go func(){ for v := range ch2 { merged <- v } }()',
+        },
+        {
+          concept: 'pipeline',
+          when: 'multi-stage data processing এ',
+          q: '৩ stage pipeline বানাও: generate(numbers) → square(numbers) → print। প্রতিটা stage একটা channel input নেয়, একটা channel output দেয়, পরের stage সেটা ব্যবহার করে।',
+          hint: 'func square(in <-chan int) <-chan int { out := make(chan int); go func(){ defer close(out); for n := range in { out <- n*n } }(); return out }',
+        },
+      ],
+    },
+    {
+      title: 'select statement',
+      dot: '#F59E0B',
+      sub: 'Problems 9–12',
+      items: [
+        {
+          concept: 'select basics',
+          when: 'একাধিক channel থেকে যেটা আগে আসে সেটা handle করতে',
+          q: 'দুটো channel বানাও। দুটোতেই আলাদা goroutine থেকে আলাদা delay-তে value পাঠাও। select দিয়ে যেটা আগে আসে সেটা receive করো।',
+          hint: "select { case v1 := <-ch1: fmt.Println('ch1:', v1); case v2 := <-ch2: fmt.Println('ch2:', v2) }",
+        },
+        {
+          concept: 'select with default',
+          when: 'non-blocking channel check করতে',
+          q: 'একটা channel থেকে non-blocking receive করার চেষ্টা করো — যদি কিছু না থাকে, default case এ চলে যাবে, block করবে না।',
+          hint: "select { case v := <-ch: fmt.Println(v); default: fmt.Println('no data ready') }",
+        },
+        {
+          concept: 'timeout pattern',
+          when: 'operation নির্দিষ্ট সময়ে শেষ না হলে দেখতে',
+          q: 'একটা slow operation channel থেকে result আসার জন্য 2 second wait করো। 2 second এর মধ্যে না আসলে timeout message দাও — time.After() ব্যবহার করে।',
+          hint: "select { case res := <-resultCh: fmt.Println(res); case <-time.After(2*time.Second): fmt.Println('timeout!') }",
+        },
+        {
+          concept: 'select in loop',
+          when: 'একাধিক event continuously শুনতে চাইলে',
+          q: 'একটা for loop এর ভেতরে select বসাও যেটা দুটো channel থেকে continuously শুনবে — একটা data channel, একটা stop/done channel। done channel থেকে signal এলে loop break করবে।',
+          hint: 'for { select { case v := <-dataCh: process(v); case <-done: return } }',
+        },
+      ],
+    },
+    {
+      title: 'Real-world & safety',
+      dot: '#DC2626',
+      sub: 'Problems 13–15',
+      items: [
+        {
+          concept: 'context cancellation with channel',
+          when: 'graceful shutdown করতে',
+          q: 'একটা long-running goroutine চালাও for loop এ যেটা ctx.Done() চেক করে। context cancel করলে goroutine গ্রেসফুলি বের হয়ে যাবে।',
+          hint: "for { select { case <-ctx.Done(): fmt.Println('stopping'); return; default: doWork() } }",
+        },
+        {
+          concept: 'deadlock awareness',
+          when: 'bug চেনা ও avoid করা শিখতে',
+          q: 'ইচ্ছাকৃতভাবে একটা deadlock তৈরি করো (unbuffered channel এ send করছ কিন্তু কোনো receiver নেই)। Go runtime এর error message দেখো। তারপর fix করো (গোরুটিন এ পাঠিয়ে বা buffer দিয়ে)।',
+          hint: 'ch := make(chan int); ch <- 1 // main এ direct করলে deadlock — কারণ কেউ receive করছে না। fix: go func(){ ch<-1 }()',
+        },
+        {
+          concept: 'closing channel safely',
+          when: 'multiple sender থাকলে',
+          q: '৩টা goroutine একই channel এ data পাঠায়। শুধু একবার close করতে হবে — কিন্তু কে close করবে? sync.WaitGroup ব্যবহার করে দেখাও কীভাবে সব sender শেষ হওয়ার পর নিরাপদে একবার close করা যায়।',
+          hint: 'var wg sync.WaitGroup; wg.Add(3); go func(){ wg.Wait(); close(ch) }() — সব sender wg.Done() call করলে এই goroutine close করবে। কখনো একাধিকবার close কোরো না, panic হবে।',
+        },
+      ],
+    },
+  ]
+
+  const SK = 'go_channels_15'
+  let state = {}
+  try {
+    state = JSON.parse(localStorage.getItem(SK)) || {}
+  } catch {}
+  let collapsed = {}
+
+  function save() {
+    try {
+      localStorage.setItem(SK, JSON.stringify(state))
+    } catch {}
+  }
+
+  function updateStats() {
+    const done = Object.values(state).filter(Boolean).length
+    const pct = Math.round((done / 15) * 100)
+    document.getElementById('s1').textContent = done
+    document.getElementById('s2').textContent = pct + '%'
+    document.getElementById('prog').style.width = pct + '%'
+  }
+
+  function toggleHint(id, btn) {
+    const el = document.getElementById(id)
+    const vis = el.classList.toggle('show')
+    btn.textContent = vis ? 'hint লুকাও' : 'hint দেখো'
+  }
+
+  function toggleSection(id) {
+    collapsed[id] = !collapsed[id]
+    document
+      .getElementById('list-' + id)
+      .classList.toggle('collapsed', collapsed[id])
+    document
+      .getElementById('chev-' + id)
+      .classList.toggle('open', !collapsed[id])
+  }
+
+  function render() {
+    const root = document.getElementById('root')
+    let idx = 0
+    sections.forEach((sec, si) => {
+      const secEl = document.createElement('div')
+      secEl.className = 'section'
+
+      const header = document.createElement('div')
+      header.className = 'sec-header'
+      header.onclick = () => toggleSection(si)
+      header.innerHTML = `
+      <div class="sec-dot" style="background:${sec.dot}"></div>
+      <span class="sec-title">${sec.title}</span>
+      <span class="sec-sub">${sec.sub}</span>
+      <i class="ti ti-chevron-down chevron open" id="chev-${si}"></i>
+    `
+
+      const list = document.createElement('div')
+      list.id = 'list-' + si
+
+      sec.items.forEach((item) => {
+        const key = 'p' + idx
+        const done = !!state[key]
+        const hintId = 'hint-' + idx
+        const card = document.createElement('div')
+        card.className = 'card' + (done ? ' done' : '')
+        card.innerHTML = `
+        <button class="check${done ? ' on' : ''}" aria-label="mark solved"><i class="ti ti-check"></i></button>
+        <div class="body">
+          <div class="tag-row">
+            <span class="tag tag-concept">${item.concept}</span>
+            <span class="tag tag-when">কখন: ${item.when}</span>
+          </div>
+          <div class="q">${idx + 1}. ${item.q}</div>
+          <button class="hint-btn" onclick="toggleHint('${hintId}', this)">hint দেখো</button>
+          <div class="hint" id="${hintId}">💡 ${item.hint}</div>
+        </div>
+      `
+        card.querySelector('.check').onclick = function () {
+          state[key] = !state[key]
+          save()
+          this.classList.toggle('on', state[key])
+          card.classList.toggle('done', state[key])
+          updateStats()
+        }
+        list.appendChild(card)
+        idx++
+      })
+
+      secEl.appendChild(header)
+      secEl.appendChild(list)
+      root.appendChild(secEl)
+    })
+    updateStats()
+  }
+
+  render()
+</script>

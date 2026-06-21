@@ -1,0 +1,613 @@
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  .w {
+    padding: 1rem 0;
+    font-family: var(--font-sans);
+  }
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+  .tab {
+    padding: 7px 14px;
+    border-radius: var(--border-radius-md);
+    border: 0.5px solid var(--color-border-secondary);
+    background: transparent;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    transition: all 0.15s;
+  }
+  .tab.active {
+    background: var(--color-background-info);
+    color: var(--color-text-info);
+    border-color: transparent;
+    font-weight: 500;
+  }
+  .sec {
+    display: none;
+  }
+  .sec.active {
+    display: block;
+  }
+  .card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 1rem 1.25rem;
+    margin-bottom: 10px;
+  }
+  .daytitle {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: 4px;
+  }
+  .daysub {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-bottom: 12px;
+  }
+  .ex {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    gap: 8px;
+    align-items: center;
+    padding: 9px 0;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+  .ex:last-child {
+    border-bottom: none;
+  }
+  .exn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--color-background-info);
+    color: var(--color-text-info);
+    font-size: 11px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .exname {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+  .exhint {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    margin-top: 2px;
+  }
+  .exset {
+    font-size: 12px;
+    color: var(--color-text-info);
+    white-space: nowrap;
+    text-align: right;
+    font-weight: 500;
+}
+
+ /* design sense + design concept + learn the tool */
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+  }
+  .bg {
+    background: var(--color-background-success);
+    color: var(--color-text-success);
+  }
+  .bb {
+    background: var(--color-background-info);
+    color: var(--color-text-info);
+  }
+  .ba {
+    background: var(--color-background-warning);
+    color: var(--color-text-warning);
+  }
+  .br {
+    background: var(--color-background-danger);
+    color: var(--color-text-danger);
+  }
+  .week {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .wd {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    border: 0.5px solid var(--color-border-secondary);
+  }
+  .won {
+    background: var(--color-background-info);
+    color: var(--color-text-info);
+    border-color: transparent;
+  }
+  .woff {
+    background: var(--color-background-secondary);
+    color: var(--color-text-secondary);
+  }
+  .wleg {
+    background: var(--color-background-success);
+    color: var(--color-text-success);
+    border-color: transparent;
+  }
+  .timerow {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .timebox {
+    flex: 1;
+    min-width: 100px;
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 0.65rem 0.9rem;
+  }
+  .timelabel {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    margin-bottom: 3px;
+  }
+  .timeval {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+  .tip {
+    display: flex;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+  .tip:last-child {
+    border-bottom: none;
+  }
+  .tipicon {
+    color: var(--color-text-info);
+    font-size: 17px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  h3 {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 1rem 0 6px;
+  }
+  .progbar {
+    height: 6px;
+    background: var(--color-border-tertiary);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .progfill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--color-background-info);
+  }
+  .warnbox {
+    background: var(--color-background-warning);
+    border-radius: var(--border-radius-md);
+    padding: 0.75rem 1rem;
+    font-size: 13px;
+    color: var(--color-text-warning);
+    margin-bottom: 10px;
+  }
+  .btnrow {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .spbtn {
+    padding: 11px 14px;
+    border-radius: var(--border-radius-md);
+    border: 0.5px solid var(--color-border-secondary);
+    background: transparent;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--color-text-primary);
+    text-align: left;
+    width: 100%;
+  }
+</style>
+<div class="w">
+  <div class="tabs">
+    <button class="tab active" onclick="sw('schedule', this)">
+      📅 Schedule
+    </button>
+    <button class="tab" onclick="sw('push', this)">💪 Push Day</button>
+    <button class="tab" onclick="sw('pull', this)">🔙 Pull Day</button>
+    <button class="tab" onclick="sw('legs', this)">🦵 Legs Day</button>
+    <button class="tab" onclick="sw('timing', this)">⏱ Timing</button>
+  </div>
+
+  <div id="schedule" class="sec active">
+    <div class="week">
+      <div class="won wd">Mon</div>
+      <div class="won wd">Tue</div>
+      <div class="wleg wd">Wed</div>
+      <div class="woff wd">Thu</div>
+      <div class="won wd">Fri</div>
+      <div class="won wd">Sat</div>
+      <div class="woff wd">Sun</div>
+    </div>
+    <div style="display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap">
+      <span class="badge bb">Mon — Push</span>
+      <span class="badge bb">Tue — Pull</span>
+      <span class="badge bg">Wed — Legs</span>
+      <span class="badge ba">Thu — Rest</span>
+      <span class="badge bb">Fri — Push</span>
+      <span class="badge bb">Sat — Pull</span>
+      <span class="badge ba">Sun — Rest</span>
+    </div>
+    <div class="card">
+      <div class="daytitle">কেন এই structure?</div>
+      <div
+        style="
+          font-size: 13px;
+          color: var(--color-text-secondary);
+          line-height: 1.8;
+          margin-top: 4px;
+        "
+      >
+        • Push (chest, shoulder, triceps) → Pull (back, biceps) → Legs → Rest<br />
+        • একই muscle কে ৪৮ ঘণ্টা rest দেওয়া হচ্ছে — এটাই muscle grow করার
+        সময়<br />
+        • Football খেলার দিন Legs day skip করে rest নিবি<br />
+        • Week 3–4 এ Thu তেও Legs করতে পারিস যদি energy থাকে
+      </div>
+    </div>
+    <div class="card">
+      <div class="daytitle">প্রতি week এ progress track</div>
+      <div
+        style="
+          font-size: 13px;
+          color: var(--color-text-secondary);
+          margin: 8px 0 4px;
+        "
+      >
+        Push-up max reps
+      </div>
+      <div class="progbar">
+        <div class="progfill" id="pb" style="width: 37%"></div>
+      </div>
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          font-size: 11px;
+          color: var(--color-text-secondary);
+          margin-top: 4px;
+        "
+      >
+        <span>Week 1: ~15</span><span>Target: ~25+</span>
+      </div>
+      <div
+        style="
+          font-size: 12px;
+          color: var(--color-text-secondary);
+          margin-top: 10px;
+        "
+      >
+        প্রতি সপ্তাহে ১–২ rep বাড়লেই তুই সঠিক track এ আছিস।
+      </div>
+    </div>
+  </div>
+
+  <div id="push" class="sec">
+    <div class="card">
+      <div class="daytitle">Push Day</div>
+      <div class="daysub">Chest · Shoulders · Triceps — ৪৫ মিনিট</div>
+      <div class="ex">
+        <div class="exn">1</div>
+        <div>
+          <div class="exname">Wide grip push-up</div>
+          <div class="exhint">হাত shoulder এর বাইরে — chest feel করবি</div>
+        </div>
+        <div class="exset">4 × 12–15</div>
+      </div>
+      <div class="ex">
+        <div class="exn">2</div>
+        <div>
+          <div class="exname">Pike push-up</div>
+          <div class="exhint">হিপ উপরে তুলে, মাথা নিচে — shoulder hit করে</div>
+        </div>
+        <div class="exset">3 × 10</div>
+      </div>
+      <div class="ex">
+        <div class="exn">3</div>
+        <div>
+          <div class="exname">Diamond push-up</div>
+          <div class="exhint">হাত diamond shape — triceps burn করবে</div>
+        </div>
+        <div class="exset">3 × 8–10</div>
+      </div>
+      <div class="ex">
+        <div class="exn">4</div>
+        <div>
+          <div class="exname">Backpack shoulder press</div>
+          <div class="exhint">বসে বা দাঁড়িয়ে — ধীরে ধীরে</div>
+        </div>
+        <div class="exset">3 × 12</div>
+      </div>
+      <div class="ex">
+        <div class="exn">5</div>
+        <div>
+          <div class="exname">Chair dips</div>
+          <div class="exhint">পিছনে chair, শরীর নামিয়ে উপরে — triceps</div>
+        </div>
+        <div class="exset">3 × 10–12</div>
+      </div>
+      <div class="ex">
+        <div class="exn">6</div>
+        <div>
+          <div class="exname">Incline push-up (wall)</div>
+          <div class="exhint">Lower chest — হাত উঁচুতে রেখে push-up</div>
+        </div>
+        <div class="exset">2 × 15</div>
+      </div>
+    </div>
+    <div class="warnbox">
+      ⏸ Sets এর মধ্যে rest: <strong>60–90 সেকেন্ড।</strong> এর বেশি না, কম না।
+    </div>
+  </div>
+
+  <div id="pull" class="sec">
+    <div class="card">
+      <div class="daytitle">Pull Day</div>
+      <div class="daysub">Back · Biceps · Grip — ৪৫ মিনিট</div>
+      <div class="ex">
+        <div class="exn">1</div>
+        <div>
+          <div class="exname">Pull-up (overhand)</div>
+          <div class="exhint">
+            না পারলে negative pull-up — উপর থেকে slowly নামা
+          </div>
+        </div>
+        <div class="exset">4 × max</div>
+      </div>
+      <div class="ex">
+        <div class="exn">2</div>
+        <div>
+          <div class="exname">Chin-up (underhand)</div>
+          <div class="exhint">হাত ভেতরের দিকে — biceps বেশি hit করে</div>
+        </div>
+        <div class="exset">3 × max</div>
+      </div>
+      <div class="ex">
+        <div class="exn">3</div>
+        <div>
+          <div class="exname">Backpack bent-over row</div>
+          <div class="exhint">কোমর সামনে ঝুঁকে, backpack টেনে বুকে আনা</div>
+        </div>
+        <div class="exset">4 × 12</div>
+      </div>
+      <div class="ex">
+        <div class="exn">4</div>
+        <div>
+          <div class="exname">Backpack bicep curl</div>
+          <div class="exhint">কনুই fixed রেখে — শুধু হাত ভাঁজ করা</div>
+        </div>
+        <div class="exset">3 × 12–15</div>
+      </div>
+      <div class="ex">
+        <div class="exn">5</div>
+        <div>
+          <div class="exname">Dead hang</div>
+          <div class="exhint">
+            Pull-up bar এ ঝুলে থাকা — forearm grip বাড়ায়
+          </div>
+        </div>
+        <div class="exset">3 × 30 sec</div>
+      </div>
+      <div class="ex">
+        <div class="exn">6</div>
+        <div>
+          <div class="exname">Backpack hammer curl</div>
+          <div class="exhint">Neutral grip — forearm + biceps দুটোই</div>
+        </div>
+        <div class="exset">2 × 12</div>
+      </div>
+    </div>
+    <div class="warnbox">
+      ⏸ Sets এর মধ্যে rest: <strong>60–90 সেকেন্ড।</strong> Pull-up এর পর ২
+      মিনিট নিতে পারিস।
+    </div>
+  </div>
+
+  <div id="legs" class="sec">
+    <div class="card">
+      <div class="daytitle">Legs Day</div>
+      <div class="daysub">Quads · Hamstrings · Calves · Glutes — ৪০ মিনিট</div>
+      <div class="ex">
+        <div class="exn">1</div>
+        <div>
+          <div class="exname">Bodyweight squat</div>
+          <div class="exhint">
+            পা shoulder width, হাঁটু পায়ের আঙুলের বাইরে না যায়
+          </div>
+        </div>
+        <div class="exset">4 × 20</div>
+      </div>
+      <div class="ex">
+        <div class="exn">2</div>
+        <div>
+          <div class="exname">Backpack squat</div>
+          <div class="exhint">Backpack পরে squat — extra resistance</div>
+        </div>
+        <div class="exset">3 × 15</div>
+      </div>
+      <div class="ex">
+        <div class="exn">3</div>
+        <div>
+          <div class="exname">Bulgarian split squat</div>
+          <div class="exhint">পিছনের পা chair এ — সামনের পা দিয়ে নামা</div>
+        </div>
+        <div class="exset">3 × 10 each</div>
+      </div>
+      <div class="ex">
+        <div class="exn">4</div>
+        <div>
+          <div class="exname">Glute bridge</div>
+          <div class="exhint">শুয়ে, হাঁটু ভাঁজ করে হিপ উপরে তোলা</div>
+        </div>
+        <div class="exset">3 × 20</div>
+      </div>
+      <div class="ex">
+        <div class="exn">5</div>
+        <div>
+          <div class="exname">Calf raise</div>
+          <div class="exhint">পায়ের আঙুলে উঠে নামা — দেওয়াল ধরে</div>
+        </div>
+        <div class="exset">4 × 25</div>
+      </div>
+      <div class="ex">
+        <div class="exn">6</div>
+        <div>
+          <div class="exname">Wall sit</div>
+          <div class="exhint">দেওয়ালে পিঠ, ৯০° angle — hold করা</div>
+        </div>
+        <div class="exset">3 × 45 sec</div>
+      </div>
+    </div>
+    <div class="warnbox">
+      ⏸ Legs day এ rest একটু বেশি নিতে পারিস — <strong>90 সেকেন্ড</strong> sets
+      এর মধ্যে।
+    </div>
+  </div>
+
+  <div id="timing" class="sec">
+    <div class="timerow">
+      <div class="timebox">
+        <div class="timelabel">Workout শুরু</div>
+        <div class="timeval">সকাল ৮টা</div>
+      </div>
+      <div class="timebox">
+        <div class="timelabel">Duration</div>
+        <div class="timeval">৪৫ মিনিট</div>
+      </div>
+      <div class="timebox">
+        <div class="timelabel">Set rest</div>
+        <div class="timeval">৬০–৯০ sec</div>
+      </div>
+    </div>
+
+    <h3>Workout এর আগে-পরে</h3>
+    <div class="card">
+      <div class="tip">
+        <i class="ti ti-clock tipicon"></i>
+        <div>
+          <strong style="color: var(--color-text-primary)"
+            >Workout এর ৩০ মিনিট আগে</strong
+          >
+          — ২টা কলা বা রুটি + পানি। Empty stomach এ workout করবি না।
+        </div>
+      </div>
+      <div class="tip">
+        <i class="ti ti-bolt tipicon"></i>
+        <div>
+          <strong style="color: var(--color-text-primary)"
+            >Warmup ৫ মিনিট</strong
+          >
+          — জায়গায় দাঁড়িয়ে হাঁটা, arm circles, হালকা jumping jacks। Injury
+          এড়াতে।
+        </div>
+      </div>
+      <div class="tip">
+        <i class="ti ti-meat tipicon"></i>
+        <div>
+          <strong style="color: var(--color-text-primary)"
+            >Workout শেষের ৩০ মিনিটের মধ্যে</strong
+          >
+          — ৩টা ডিম + ১ গ্লাস দুধ। এটা miss করলে workout waste।
+        </div>
+      </div>
+      <div class="tip">
+        <i class="ti ti-moon tipicon"></i>
+        <div>
+          <strong style="color: var(--color-text-primary)"
+            >রাতে ঘুমের আগে</strong
+          >
+          — ২টা ডিম + দুধ। রাতে ঘুমের মধ্যে muscle build হয়।
+        </div>
+      </div>
+    </div>
+
+    <h3>Football থাকলে কী করবি</h3>
+    <div class="card">
+      <div class="tip">
+        <i class="ti ti-ball-football tipicon"></i>
+        <div>Football যেদিন — সেদিন workout নেই। Football ই যথেষ্ট।</div>
+      </div>
+      <div class="tip">
+        <i class="ti ti-salad tipicon"></i>
+        <div>Football এর পরে extra ৪০০ kcal বেশি খাবি — ভাত + মুরগি।</div>
+      </div>
+      <div class="tip">
+        <i class="ti ti-zzz tipicon"></i>
+        <div>Football এর পরদিন body ক্লান্ত থাকলে — rest নিবি, guilt নেই।</div>
+      </div>
+    </div>
+
+    <div class="btnrow">
+      <button
+        class="spbtn"
+        onclick="
+          sendPrompt('আমি pull-up একটাও করতে পারি না, কীভাবে শুরু করবো?')
+        "
+      >
+        Pull-up না পারলে কীভাবে শুরু করবো ↗
+      </button>
+      <button
+        class="spbtn"
+        onclick="
+          sendPrompt(
+            'Backpack এ কতটুকু weight দিয়ে শুরু করবো এবং কীভাবে বাড়াবো?',
+          )
+        "
+      >
+        Backpack এ কত weight দিয়ে শুরু করবো ↗
+      </button>
+    </div>
+  </div>
+</div>
+<script>
+  function sw(id, el) {
+    document
+      .querySelectorAll(".sec")
+      .forEach((s) => s.classList.remove("active"));
+    document
+      .querySelectorAll(".tab")
+      .forEach((t) => t.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+    el.classList.add("active");
+  }
+</script>

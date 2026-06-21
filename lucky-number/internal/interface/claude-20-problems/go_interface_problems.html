@@ -1,0 +1,498 @@
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  .app {
+    padding: 1rem 0;
+    font-family: var(--font-sans);
+  }
+  .progress-bar {
+    height: 5px;
+    background: var(--color-background-secondary);
+    border-radius: 99px;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: #7c3aed;
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+  .stats {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+  .stat {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 0.5rem 1rem;
+    flex: 1;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    margin-top: 1px;
+  }
+  .section {
+    margin-bottom: 1.5rem;
+  }
+  .sec-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0.6rem;
+    cursor: pointer;
+    user-select: none;
+  }
+  .sec-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    flex: 1;
+  }
+  .sec-sub {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+  }
+  .sec-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .chevron {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    transition: transform 0.2s;
+  }
+  .chevron.open {
+    transform: rotate(180deg);
+  }
+  .collapsed {
+    display: none;
+  }
+  .card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-md);
+    padding: 0.75rem 1rem;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .card:hover {
+    border-color: var(--color-border-secondary);
+  }
+  .card.done {
+    opacity: 0.5;
+  }
+  .check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-border-secondary);
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    transition: all 0.15s;
+  }
+  .check.on {
+    background: #7c3aed;
+    border-color: #7c3aed;
+  }
+  .check i {
+    color: white;
+    font-size: 11px;
+    display: none;
+  }
+  .check.on i {
+    display: block;
+  }
+  .body {
+    flex: 1;
+  }
+  .tag-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 5px;
+  }
+  .tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 99px;
+  }
+  .tag-concept {
+    background: #ede9fe;
+    color: #5b21b6;
+  }
+  .tag-when {
+    background: #f0fdf4;
+    color: #166534;
+    font-style: italic;
+  }
+  .q {
+    font-size: 13.5px;
+    color: var(--color-text-primary);
+    line-height: 1.65;
+  }
+  .hint-btn {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 6px;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .hint {
+    display: none;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-top: 5px;
+    line-height: 1.65;
+    background: var(--color-background-secondary);
+    border-radius: 6px;
+    padding: 7px 10px;
+  }
+  .hint.show {
+    display: block;
+  }
+  .why {
+    font-size: 11.5px;
+    color: #7c3aed;
+    margin-top: 4px;
+    font-style: italic;
+  }
+</style>
+
+<div class="app">
+  <div style="margin-bottom: 1.25rem">
+    <h2
+      style="
+        font-size: 17px;
+        font-weight: 500;
+        color: var(--color-text-primary);
+      "
+    >
+      Go interfaces — 20 problems
+    </h2>
+    <p
+      style="
+        font-size: 12px;
+        color: var(--color-text-secondary);
+        margin-top: 3px;
+      "
+    >
+      কখন লাগে, কেন লাগে — সেটা বুঝিয়ে বানানো
+    </p>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num" id="s1">0</div>
+      <div class="stat-label">Solved</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">20</div>
+      <div class="stat-label">Total</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="s2">0%</div>
+      <div class="stat-label">Done</div>
+    </div>
+  </div>
+  <div id="root"></div>
+</div>
+
+<script>
+  const sections = [
+    {
+      title: 'What is an interface — core feel',
+      dot: '#7C3AED',
+      sub: 'Problems 1–4',
+      items: [
+        {
+          concept: 'implicit implementation',
+          when: 'সবসময়',
+          q: "একটা Greeter interface বানাও — Greet() string method সহ। তারপর EnglishGreeter ও BanglaGreeter struct বানাও। কোনো 'implements' keyword না লিখেই দুটো দিয়েই Greeter ব্যবহার করো।",
+          hint: 'Go-তে interface implicit — শুধু method signature match করলেই হয়। sayHello(g Greeter) function লেখো যেটা যেকোনো Greeter নিতে পারে।',
+          why: 'এটাই Go interface এর মূল জিনিস — কোনো coupling নেই।',
+        },
+        {
+          concept: 'interface as function param',
+          when: 'behavior abstract করতে',
+          q: 'Shape interface বানাও Area() float64 সহ। Circle, Rectangle, Triangle implement করো। একটাই printArea(s Shape) function লেখো যেটা তিনটার জন্যই কাজ করে।',
+          hint: 'func printArea(s Shape) { fmt.Println(s.Area()) } — caller যা পাঠাক, function জানে না কোন struct।',
+          why: 'একটা function দিয়ে অনেক type handle — এটাই polymorphism।',
+        },
+        {
+          concept: 'interface slice',
+          when: 'mixed types একসাথে রাখতে',
+          q: 'উপরের Shape গুলো একটা []Shape slice-এ রাখো। Loop করে সবার Area() print করো। লক্ষ্য করো — different types একই slice-এ।',
+          hint: 'shapes := []Shape{Circle{5}, Rectangle{3,4}, Triangle{6,4}} — range করে s.Area() call করো।',
+          why: 'Real project এ এভাবেই mixed types manage করা হয়।',
+        },
+        {
+          concept: 'empty interface / any',
+          when: 'type জানা নেই',
+          q: 'একটা function লেখো printAnything(v any) যেটা int, string, bool, struct — যাই দাও print করে। তারপর বোঝো কেন এটা overuse করা বিপজ্জনক।',
+          hint: 'any মানে interface{} — সব type এটা satisfy করে। কিন্তু type safety হারিয়ে যায়।',
+          why: 'JSON decode, generic containers — এখানে any লাগে। বাকিটায় avoid করো।',
+        },
+      ],
+    },
+    {
+      title: 'Type assertion & type switch',
+      dot: '#0EA5E9',
+      sub: 'Problems 5–8',
+      items: [
+        {
+          concept: 'type assertion',
+          when: 'interface থেকে concrete type বের করতে',
+          q: "var v any = 'hello' — এই v থেকে string বের করো type assertion দিয়ে। তারপর safe version লেখো (comma-ok pattern) যেটা panic না করে।",
+          hint: 's := v.(string) — unsafe। s, ok := v.(string) — safe। ok false হলে assertion fail।',
+          why: 'Production code এ সবসময় comma-ok pattern ব্যবহার করো।',
+        },
+        {
+          concept: 'type switch',
+          when: 'multiple possible types handle করতে',
+          q: "describe(v any) function লেখো। v যদি int হয় 'number', string হলে 'text', bool হলে 'flag', বাকি সব 'unknown' print করবে — type switch দিয়ে।",
+          hint: 'switch t := v.(type) { case int: ... case string: ... default: ... }',
+          why: 'API response parse, plugin systems — এখানে type switch দরকার হয়।',
+        },
+        {
+          concept: 'interface type check',
+          when: 'optional behavior check করতে',
+          q: 'Animal interface বানাও Speak() সহ। Swimmer interface বানাও Swim() সহ। Duck struct দুটোই implement করুক। একটা function লেখো যেটা check করে Animal টা swim করতে পারে কিনা।',
+          hint: 'if swimmer, ok := a.(Swimmer); ok { swimmer.Swim() } — runtime এ capability check।',
+          why: 'Optional feature check — middleware, plugin এ এটা খুব common।',
+        },
+        {
+          concept: 'errors interface',
+          when: 'custom error বানাতে',
+          q: 'ValidationError struct বানাও (Field, Message সহ)। Error() string implement করো। একটা validate() function লেখো যেটা এই error return করে। errors.As() দিয়ে specific error ধরো।',
+          hint: 'type ValidationError struct{ Field, Message string }; func (e *ValidationError) Error() string — error interface এ শুধু Error() string আছে।',
+          why: 'Backend API তে custom error handling এভাবেই করা হয়।',
+        },
+      ],
+    },
+    {
+      title: 'Real-world patterns',
+      dot: '#10B981',
+      sub: 'Problems 9–13',
+      items: [
+        {
+          concept: 'dependency injection',
+          when: 'testing ও flexibility এর জন্য',
+          q: 'NotificationSender interface বানাও Send(msg string) error সহ। EmailSender ও SMSSender implement করো। UserService struct বানাও যেটা NotificationSender নেয় — concrete type না। দেখাও কীভাবে runtime এ swap করা যায়।',
+          hint: 'type UserService struct { sender NotificationSender } — constructor এ interface নাও, concrete type না।',
+          why: 'এটাই DI — test এ fake sender দাও, production এ real। Coupling নেই।',
+        },
+        {
+          concept: 'io.Reader / io.Writer',
+          when: 'file, network, buffer — সব একই কোড দিয়ে',
+          q: 'একটা function লেখো processData(r io.Reader) যেটা যেকোনো reader থেকে data পড়ে। strings.NewReader, os.File, bytes.Buffer — তিনটা দিয়েই test করো। একই function, আলাদা source।',
+          hint: 'io.Reader শুধু Read(p []byte) (n int, err error) — এই একটা method। সব readable type এটা satisfy করে।',
+          why: 'Go stdlib এর সবচেয়ে powerful interface। HTTP body, file, network — সব io.Reader।',
+        },
+        {
+          concept: 'http.Handler',
+          when: 'web server বানাতে',
+          q: 'http.Handler interface implement করো manually — ServeHTTP(w http.ResponseWriter, r *http.Request)। নিজের custom handler struct বানাও। net/http দিয়ে serve করো।',
+          hint: "type MyHandler struct{}; func (h MyHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) { fmt.Fprintln(w, 'hello') }",
+          why: 'Go web framework না জেনেই এটা বুঝলে সব framework বোঝা সহজ হয়।',
+        },
+        {
+          concept: 'strategy pattern',
+          when: 'algorithm runtime এ বদলাতে',
+          q: 'Sorter interface বানাও Sort([]int) []int সহ। BubbleSort ও QuickSort implement করো। DataProcessor struct বানাও যেটা যেকোনো Sorter নিতে পারে। Runtime এ strategy বদলাও।',
+          hint: 'type DataProcessor struct { sorter Sorter } — method এ sorter.Sort(data) call করো।',
+          why: 'Payment gateway, auth strategy, sorting algorithm — যেখানে behavior swap দরকার।',
+        },
+        {
+          concept: 'interface composition',
+          when: 'ছোট interfaces combine করতে',
+          q: 'Reader interface বানাও (Read()), Writer interface বানাও (Write()), তারপর ReadWriter interface বানাও দুটো embed করে। একটা struct implement করো যেটা তিনটাই satisfy করে।',
+          hint: 'type ReadWriter interface { Reader; Writer } — Go stdlib এ io.ReadWriter এভাবেই বানানো।',
+          why: 'Interface ছোট রাখো, compose করো — এটাই Go-র idiomatic style।',
+        },
+      ],
+    },
+    {
+      title: 'Testing with interfaces',
+      dot: '#F59E0B',
+      sub: 'Problems 14–17',
+      items: [
+        {
+          concept: 'mock with interface',
+          when: 'unit test এ real dependency avoid করতে',
+          q: 'Database interface বানাও GetUser(id int) (User, error) সহ। RealDB ও MockDB implement করো। UserService তে Database inject করো। MockDB দিয়ে test লেখো — real DB ছাড়াই।',
+          hint: 'MockDB এ hardcoded response return করো। Test এ MockDB inject করো UserService এ।',
+          why: 'এটা না জানলে testable code লেখা প্রায় অসম্ভব।',
+        },
+        {
+          concept: 'interface for external service',
+          when: '3rd party API mock করতে',
+          q: 'SMSProvider interface বানাও। TwilioSMS (real) ও FakeSMS (test) implement করো। FakeSMS sent messages একটা slice এ রাখুক। Test এ assert করো message গেছে কিনা।',
+          hint: 'type FakeSMS struct { Sent []string } — Send() এ Sent append করো।',
+          why: 'External API call test করার standard way এটাই।',
+        },
+        {
+          concept: 'table-driven test with interface',
+          when: 'multiple implementations একসাথে test করতে',
+          q: 'Calculator interface বানাও Add(a, b int) int সহ। দুটো implementation করো। Table-driven test লেখো যেটা দুটো implementation-ই same inputs দিয়ে test করে।',
+          hint: 'impls := []Calculator{ImplA{}, ImplB{}} — loop করে প্রতিটা test case প্রতিটা impl এ run করো।',
+          why: 'Multiple implementation same contract follow করছে কিনা verify করার clean way।',
+        },
+        {
+          concept: 'nil interface gotcha',
+          when: 'bug avoid করতে',
+          q: 'একটা common Go bug দেখাও: typed nil vs untyped nil। func getError() error { var p *MyError = nil; return p } — এটা nil না কেন? Fix করো।',
+          hint: 'Interface দুটো জিনিস hold করে: type + value। Type set থাকলে interface nil না, value nil হলেও।',
+          why: 'এই bug production এ অনেকের হয়। একবার বুঝলে আর হবে না।',
+        },
+      ],
+    },
+    {
+      title: 'Advanced & project-level',
+      dot: '#EF4444',
+      sub: 'Problems 18–20',
+      items: [
+        {
+          concept: 'middleware chain',
+          when: 'HTTP middleware বানাতে',
+          q: 'http.Handler wrap করে দুটো middleware বানাও — Logger (request log করে) ও Auth (header check করে)। Chain করো: Auth(Logger(mainHandler))। প্রতিটা middleware next handler কে call করুক।',
+          hint: 'func Logger(next http.Handler) http.Handler { return http.HandlerFunc(func(w, r){ log...; next.ServeHTTP(w,r) }) }',
+          why: 'Gin, Echo, Chi — সব framework এর middleware এভাবেই কাজ করে।',
+        },
+        {
+          concept: 'plugin-like system',
+          when: 'extensible system বানাতে',
+          q: 'EventHandler interface বানাও Handle(event string) সহ। Multiple handlers register করো একটা EventBus-এ। Event fire করলে সব registered handlers call হবে।',
+          hint: 'type EventBus struct { handlers []EventHandler } — Register() ও Fire() method বানাও।',
+          why: 'Notification system, webhook, event-driven architecture — সব এই pattern।',
+        },
+        {
+          concept: 'interface segregation',
+          when: 'bloated interface ভাঙতে',
+          q: 'একটা বড় UserRepository interface নাও (Create, Read, Update, Delete, Search, Count, Exists)। এটাকে ছোট focused interfaces এ ভাগ করো। দেখাও কীভাবে caller শুধু যা দরকার তাই নেয়।',
+          hint: 'Reader interface { Read, Exists }, Writer interface { Create, Update, Delete }, Searcher interface { Search, Count } — compose করো দরকারমতো।',
+          why: 'SOLID এর I — Interface Segregation। Real codebase এ maintainability এর জন্য critical।',
+        },
+      ],
+    },
+  ]
+
+  const SK = 'go_iface_20'
+  let state = {}
+  try {
+    state = JSON.parse(localStorage.getItem(SK)) || {}
+  } catch {}
+  let collapsed = {}
+
+  function save() {
+    try {
+      localStorage.setItem(SK, JSON.stringify(state))
+    } catch {}
+  }
+
+  function updateStats() {
+    const done = Object.values(state).filter(Boolean).length
+    const pct = Math.round((done / 20) * 100)
+    document.getElementById('s1').textContent = done
+    document.getElementById('s2').textContent = pct + '%'
+    document.getElementById('prog').style.width = pct + '%'
+  }
+
+  function toggleHint(id, btn) {
+    const el = document.getElementById(id)
+    const vis = el.classList.toggle('show')
+    btn.textContent = vis ? 'hint লুকাও' : 'hint দেখো'
+  }
+
+  function toggleSection(id) {
+    collapsed[id] = !collapsed[id]
+    document
+      .getElementById('list-' + id)
+      .classList.toggle('collapsed', collapsed[id])
+    document
+      .getElementById('chev-' + id)
+      .classList.toggle('open', !collapsed[id])
+  }
+
+  function render() {
+    const root = document.getElementById('root')
+    let idx = 0
+    sections.forEach((sec, si) => {
+      const secEl = document.createElement('div')
+      secEl.className = 'section'
+
+      const header = document.createElement('div')
+      header.className = 'sec-header'
+      header.onclick = () => toggleSection(si)
+      header.innerHTML = `
+      <div class="sec-dot" style="background:${sec.dot}"></div>
+      <span class="sec-title">${sec.title}</span>
+      <span class="sec-sub">${sec.sub}</span>
+      <i class="ti ti-chevron-down chevron open" id="chev-${si}"></i>
+    `
+
+      const list = document.createElement('div')
+      list.id = 'list-' + si
+
+      sec.items.forEach((item) => {
+        const key = 'p' + idx
+        const done = !!state[key]
+        const hintId = 'hint-' + idx
+        const card = document.createElement('div')
+        card.className = 'card' + (done ? ' done' : '')
+        card.innerHTML = `
+        <button class="check${done ? ' on' : ''}" aria-label="mark solved"><i class="ti ti-check"></i></button>
+        <div class="body">
+          <div class="tag-row">
+            <span class="tag tag-concept">${item.concept}</span>
+            <span class="tag tag-when">কখন: ${item.when}</span>
+          </div>
+          <div class="q">${idx + 1}. ${item.q}</div>
+          <div class="why">${item.why}</div>
+          <button class="hint-btn" onclick="toggleHint('${hintId}', this)">hint দেখো</button>
+          <div class="hint" id="${hintId}">💡 ${item.hint}</div>
+        </div>
+      `
+        card.querySelector('.check').onclick = function () {
+          state[key] = !state[key]
+          save()
+          this.classList.toggle('on', state[key])
+          card.classList.toggle('done', state[key])
+          updateStats()
+        }
+        list.appendChild(card)
+        idx++
+      })
+
+      secEl.appendChild(header)
+      secEl.appendChild(list)
+      root.appendChild(secEl)
+    })
+    updateStats()
+  }
+
+  render()
+</script>

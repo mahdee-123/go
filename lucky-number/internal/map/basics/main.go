@@ -5,8 +5,15 @@ import (
 	"maps"
 )
 
+
+
+
+
+
 func main() {
 	m := make(map[string]int)
+	
+	
 
 	m["key1"] = 10
 	m["key2"] = 20
@@ -62,5 +69,19 @@ func main() {
 		fmt.Println(v)
 	}
 
+
+
+
+	// 
+
+	// let's go there a
+
 	
+	ages := make(map[string]int)
+	fmt.Println(ages)
+	fmt.Println("hello",  "hello")
+
+
+	a , _:= fmt.Println("")
+	fmt.Println(a)
 }
